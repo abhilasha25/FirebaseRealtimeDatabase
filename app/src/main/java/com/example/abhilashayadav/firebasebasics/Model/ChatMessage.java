@@ -8,6 +8,16 @@ public class ChatMessage {
     private String messageText;
     private String messageUser;
 
+    public String getMessageTime() {
+        return messageTime;
+    }
+
+    public void setMessageTime(String messageTime) {
+        this.messageTime = messageTime;
+    }
+
+    private String messageTime;
+
     public String getDeviceToken() {
         return deviceToken;
     }
@@ -17,14 +27,16 @@ public class ChatMessage {
     }
 
     private String deviceToken;
+
     public ChatMessage() {
 
     }
-    public ChatMessage(String s, String displayName, long l, String deviceToken) {
-        messageText= s;
-        messageUser = displayName;
+
+    public ChatMessage(String s, String displayName, String l, String deviceToken) {
+        this.messageText = s;
+        this.messageUser = displayName;
         this.deviceToken = deviceToken;
-        messageTime=l;
+        this.messageTime = l;
     }
 
     public String getMessageText() {
@@ -43,13 +55,5 @@ public class ChatMessage {
         this.messageUser = messageUser;
     }
 
-    public long getMessageTime() {
-        return messageTime;
-    }
 
-    public void setMessageTime(long messageTime) {
-        this.messageTime = messageTime;
-    }
-
-    private long messageTime;
 }

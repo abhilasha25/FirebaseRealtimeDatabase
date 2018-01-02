@@ -6,6 +6,8 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
@@ -15,6 +17,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 
+import com.example.abhilashayadav.firebasebasics.Adapter.MessageAdapter;
 import com.example.abhilashayadav.firebasebasics.Model.ChatMessage;
 import com.example.abhilashayadav.firebasebasics.R;
 
@@ -31,6 +34,8 @@ import com.google.firebase.iid.FirebaseInstanceId;
 
 import java.util.ArrayList;
 
+import butterknife.BindView;
+
 
 public class MainActivity extends AppCompatActivity {
     private static final String TAG = "MainActivity";
@@ -38,15 +43,28 @@ public class MainActivity extends AppCompatActivity {
     private EditText mEtMessage;
     private Button btnSubmit;
     protected ArrayList<String> usernames = new ArrayList<>();
+    private ArrayList<ChatMessage> chatMessagesArraylist = new ArrayList<ChatMessage>();
     private ListView listOfMessages;
-    private EditText input;
-    FirebaseDatabase database;
+    private MessageAdapter messageAdapter;
+    private FirebaseDatabase database;
     private String token;
     private String android_id;
     Context context;
+    private ChatMessage chatMsg;
     ArrayAdapter<String> adapt;
     private DatabaseReference mDatabase;
     private FirebaseListAdapter<ChatMessage> adapter;
+/*
+    @BindView(R.id.recyclerViewMsg)
+    RecyclerView recyclerView;
+    @BindView(R.id.fab)
+    Button fab;
+    @BindView(R.id.input)
+    EditText input;*/
+
+    EditText input;
+    RecyclerView recyclerView;
+    Button fab;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,44 +72,43 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         database = FirebaseDatabase.getInstance();
-        // myRef = database.getReference("message");
+
         mDatabase = database.getReference("users");
-        input = (EditText) findViewById(R.id.input);
+
+        recyclerView = findViewById(R.id.recyclerViewMsg);
+        fab = findViewById(R.id.fab);
+        input = findViewById(R.id.input)  ;
+
         android_id = Settings.Secure.getString(getApplicationContext().getContentResolver(),
                 Settings.Secure.ANDROID_ID);
 
         token = FirebaseInstanceId.getInstance().getToken();
         Log.d(TAG, "token is: " + token);
-        FloatingActionButton fab =
-                findViewById(R.id.fab);
-        if (input.getText().toString() != "") {
-            fab.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
+
+     if (!input.getText().toString().equals("")) {
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
 
 
-                    mDatabase
-                            .push()
-                            .setValue(new ChatMessage(input.getText().toString(),
-                                    "abhilasha", System.currentTimeMillis(), android_id)
-                            );
+                mDatabase
+                        .push()
+                        .setValue(new ChatMessage(input.getText().toString(),
+                                "abhilasha", "" + System.currentTimeMillis(), android_id)
+                        );
 
-                    input.setText("");
-                }
-            });
-
-
-        }
+                input.setText("");
+            }
+        });
 
 
-        listOfMessages = findViewById(R.id.list_of_messages);
+          }
+
 
         mDatabase.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                // This method is called once with the initial value and again
-                // whenever data at this location is updated.
-                //  String value = dataSnapshot.getValue(String.class);
+
                 ChatMessage user2 = dataSnapshot.getValue(ChatMessage.class);
 
                 if (usernames != null) {
@@ -99,21 +116,26 @@ public class MainActivity extends AppCompatActivity {
                 }
                 for (DataSnapshot child : dataSnapshot.getChildren()) {
                     String device = (String) child.child("deviceToken").getValue();
-                    String username = (String) child.child("messageText").getValue();
-                    usernames.add(username);
-
-
+                    String username = (String) child.child("messageText").getValue().toString();
+                    String name = (String) child.child("messageUser").getValue().toString();
+                    String time =  ""+child.child("messageTime").getValue().toString();
+                    chatMsg = new ChatMessage();
+                    chatMsg.setMessageText(username);
+                    chatMsg.setMessageUser(name);
+                    chatMsg.setMessageTime(time);
+                    chatMessagesArraylist.add(chatMsg);
                 }
 
 
+                // adapt = new ArrayAdapter<String>(MainActivity.this, android.R.layout.simple_list_item_1, usernames);
 
+                messageAdapter = new MessageAdapter(MainActivity.this,chatMessagesArraylist);
+                RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getApplicationContext());
+                recyclerView.setLayoutManager(mLayoutManager);
+                recyclerView.setAdapter(messageAdapter);
+                messageAdapter.notifyDataSetChanged();
 
-
-
-
-                adapt = new ArrayAdapter<String>(MainActivity.this, android.R.layout.simple_list_item_1, usernames);
-
-                listOfMessages.setAdapter(adapt);
+                //listOfMessages.setAdapter(adapt);
                 dataSnapshot.child("messageText");
                 dataSnapshot.getChildrenCount();
 
