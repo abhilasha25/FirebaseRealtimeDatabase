@@ -1,3 +1,18 @@
 <resources>
     <string name="app_name">FirebaseBasics</string>
+    <string name="action_logout">LogOut</string>
+    <string name="password">password</string>
+    <string name="email">email</string>
+    <string name="register">register</string>
+    <string name="login">login</string>
+    <string name="login_register">registration</string>
+    <string name="type_a_message">type a message</string>
+    <string name="logout">logout</string>
+    <string name="are_you_sure">are you sure</string>
+    <string name="cancel">cancel</string>
+    <string name="user_successfully_added">user added</string>
+    <string name="user_unable_to_add">user unable to add</string>
+    <string name="loading">loading</string>
+    <string name="please_wait">plese wait</string>
+    <string name="adding_user_to_db">addind user in dta base</string>
 </resources>

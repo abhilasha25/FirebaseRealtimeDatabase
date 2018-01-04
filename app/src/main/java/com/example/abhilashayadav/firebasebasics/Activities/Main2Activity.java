@@ -12,7 +12,7 @@ import com.google.firebase.iid.FirebaseInstanceId;
 
 
 public class Main2Activity extends AppCompatActivity {
- Button btnShowtoken;
+  private Button btnShowtoken;
 
 
     @Override
